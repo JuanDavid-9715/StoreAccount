@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "storeaccount"
+version = "0.1.0"
+description = "Aplicación para la gestión de las cuantas de una tienda."
+authors = ["Juan D. Medellin C. <medellincalderonjuandavid@gmail.com>"]
+repository = ""
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

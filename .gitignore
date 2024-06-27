@@ -1,0 +1,34 @@
+# -- visual studio code --
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+# -- python and poetry --
+*.pyc
+
+# Packages
+/dist/*
+
+# Unit test / coverage reports
+.coverage
+.pytest_cache
+.vscode
+
+.DS_Store
+.idea/*
+.python-version
+
+/docs/site/*
+.mypy_cache
+
+.venv
+/poetry.toml
