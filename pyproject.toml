@@ -3,12 +3,18 @@ name = "storeaccount"
 version = "0.1.0"
 description = "Aplicación para la gestión de las cuantas de una tienda."
 authors = ["Juan D. Medellin C. <medellincalderonjuandavid@gmail.com>"]
-repository = ""
+repository = "https://github.com/JuanDavid-9715/StoreAccount"
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
+mysql-connector-python = "^8.4.0"
+python-dotenv = "^1.0.1"
 
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.2"
+debugpy = "^1.8.2"
 
 [build-system]
 requires = ["poetry-core"]
