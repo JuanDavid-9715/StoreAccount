@@ -6,6 +6,8 @@ import config.database as conf_db
 
 from src.components.navbar import Navbar
 
+from src.view.homeView import HomeView
+
 load_dotenv()
 
 BASE_DIR = os.path.dirname(__file__)
@@ -31,10 +33,14 @@ if __name__ == '__main__':
             page.views.clear()
             page.views.append(
                 ft.View(
-                    "/",
-                    [
-                        page.appbar,
-                        ft.Text("home"),
+                    route="/",
+                    scroll=ft.ScrollMode.ADAPTIVE,
+                    appbar=page.appbar,
+                    controls=[
+                        ft.Container(
+                            HomeView(db),
+                            padding=ft.padding.symmetric(horizontal=20)
+                        )
                     ],
                 )
             )

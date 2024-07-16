@@ -6,44 +6,47 @@ import os
 
 class DataBase():
     def __init__(self, **kwargs):
-        self.host = kwargs["host"]
-        self.user = kwargs["user"]
-        self.password = kwargs["password"]
-        self.database = kwargs["database"]
+        self.__host = kwargs["host"]
+        self.__user = kwargs["user"]
+        self.__password = kwargs["password"]
+        self.__database = kwargs["database"]
 
     def connection(function):
         def internal(self, *args, **kwargs):
             try:
                 self.conector = mysql.connector.connect(
-                    host = self.host,
-                    user = self.user,
-                    password = self.password
+                    host = self.__host,
+                    user = self.__user,
+                    password = self.__password
                 )
                 self.cursor = self.conector.cursor()
 
                 print("Conexión iniciada")
 
+                self.result=[]
+
                 function(self, *args, **kwargs)
-            except:
+            except Exception as e:
                 print("ERROR: Error en la conexión")
+                print(e)
             finally:
                 self.cursor.close()
                 self.conector.close()
 
                 print("Conexión cerrada")
-
+            return self.result
         return internal
 
     def validation_db(function):
         def internal(self, *args, **kwargs):
-            self.cursor.execute(f"SHOW DATABASES LIKE '{self.database}'")
+            self.cursor.execute(f"SHOW DATABASES LIKE '{self.__database}'")
 
             if not self.cursor.fetchone():
                 print("ERROR: Error base de datos no existe")
 
                 return
 
-            self.cursor.execute(f"USE {self.database};")
+            self.cursor.execute(f"USE {self.__database};")
 
             return function(self, *args, **kwargs)
         return internal
@@ -99,17 +102,27 @@ class DataBase():
     @connection
     @validation_db
     @validation_table
-    def get_data(self, tableName):
+    def get_data(self, tableName, columnName=None, dataName=None):
         try:
-            self.cursor.execute(f"SELECT * FROM {tableName}")
+            if columnName is not None and dataName is not None:
+                self.cursor.execute(f"SELECT * FROM {tableName} WHERE {columnName} = {dataName}")
 
-            print(f"Listas de los datos de la tabla {tableName}:")
+                print(f"Listas de los datos de la tabla {tableName}:")
 
-            for queries in self.cursor.fetchall():
-                print(f"  - {queries}.")
+                for i in self.cursor.fetchall():
+                    self.result.append(i)
+                    print(f"  - {i}.")
+            else:
+                self.cursor.execute(f"SELECT * FROM {tableName}")
+
+                print(f"Listas de los datos de la tabla {tableName}:")
+
+                for i in self.cursor.fetchall():
+                    self.result.append(i)
+                    print(f"  - {i}.")
         except:
             print(f"ERROR: Error al obtener los datos de la tabla {tableName}")
-
+    
     @connection
     @validation_db
     @validation_table
@@ -182,11 +195,11 @@ class DataBase():
         backup_dir = os.path.join(base_dir, "backup")
         data = datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S")
 
-        with open(f'{backup_dir}/{self.database}_{data}.sql', 'w') as out:
+        with open(f'{backup_dir}/{self.__database}_{data}.sql', 'w') as out:
             subprocess.Popen(
-                f'"C:\Program Files\MySQL\MySQL Workbench 8.0/"mysqldump --user={self.user} --password={self.password} --databases {self.database}',
+                f'"C:\Program Files\MySQL\MySQL Workbench 8.0/"mysqldump --user={self.user} --password={self.password} --databases {self.__database}',
                 shell=True,
                 stdout=out
             )
 
-        print(f"Se creo la la copia de seguridad con el nombre {self.database}_{data}.sql")
+        print(f"Se creo la la copia de seguridad con el nombre {self.__database}_{data}.sql")
