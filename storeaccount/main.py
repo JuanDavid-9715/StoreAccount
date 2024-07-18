@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import flet as ft
 import os
 
-import config.database as conf_db
+from config.database import DataBase
 
 from src.components.navbar import Navbar
 
@@ -20,7 +20,7 @@ db_access = {
 }
 
 if __name__ == '__main__':
-    db = conf_db.DataBase(**db_access)
+    db = DataBase(**db_access)
 
     def main(page: ft.Page):
         page.title = "CuentasTienda"
@@ -87,9 +87,6 @@ if __name__ == '__main__':
         page.go(page.route)
 
     ft.app(target=main)
-
-    # db.get_db()
-    # db.get_table()
 
     """ 
     db.post_data(

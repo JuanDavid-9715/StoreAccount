@@ -24,10 +24,15 @@ class DataBase():
                 print("Conexión iniciada")
 
                 self.result=[]
-
+                self.state=""
+                self.message=""
+                self.information=""
                 function(self, *args, **kwargs)
             except Exception as e:
-                print("ERROR: Error en la conexión")
+                self.state = "500"
+                self.message = "Internal Server Error"
+                self.information="ERROR: Error connecting database"
+                print("ERROR: Error connecting database")
                 print(e)
             finally:
                 self.cursor.close()
@@ -42,7 +47,10 @@ class DataBase():
             self.cursor.execute(f"SHOW DATABASES LIKE '{self.__database}'")
 
             if not self.cursor.fetchone():
-                print("ERROR: Error base de datos no existe")
+                self.state = "500"
+                self.message = "Internal Server Error"
+                self.information="ERROR: Database does not exist"
+                print("ERROR: Database does not exist")
 
                 return
 
@@ -56,34 +64,15 @@ class DataBase():
             self.cursor.execute(f"SHOW TABLES LIKE '{tableName}'")
 
             if not self.cursor.fetchone():
-                print("ERROR: Error tabla no existe")
+                self.state = "500"
+                self.message = "Internal Server Error"
+                self.information="ERROR: Table does not exist"
+                print("ERROR: Table does not exist")
 
                 return
 
             return function(self, tableName, *args, **kwargs)
         return internal
-
-    @connection
-    def get_db(self):
-        self.cursor.execute("SHOW DATABASES")
-
-        print("Listas de las bases de datos:")
-
-        for queries in self.cursor.fetchall():
-            print(f"  - {queries[0]}.")
-    
-    @connection
-    @validation_db
-    def get_table(self):
-        try:
-            self.cursor.execute("SHOW TABLES")
-
-            print("Listas de las tablas:")
-
-            for queries in self.cursor.fetchall():
-                print(f"  - {queries[0]}.")
-        except:
-            print("ERROR: Error al obtener las tablas")
 
     @connection
     @validation_db
@@ -92,36 +81,46 @@ class DataBase():
         try:
             self.cursor.execute(f"SHOW COLUMNS FROM {tableName}")
 
-            print(f"Listas de las columnas de la tabla {tableName}:")
+            self.state = "200"
+            self.message = "Ok"
+            print(f"Lists of columns from table {tableName}:")
 
-            for queries in self.cursor.fetchall():
-                print(f"  - {queries[0]}.")
-        except:
-            print(f"ERROR: Error al obtener las columnas de la taba {tableName}")
+            for column in self.cursor.fetchall():
+                self.result.append(column)
+                print(f"  - {column[0]}.")
+        except mysql.connector.Error as e:
+            self.state = "500"
+            self.message = "Internal Server Error"
+            self.information=f"ERROR: Error getting columns from table {tableName}"
+            print(f"ERROR: Error getting columns from table {tableName}")
+            print(f"ERROR_TYPE: {e}")
 
     @connection
     @validation_db
     @validation_table
     def get_data(self, tableName, columnName=None, dataName=None):
         try:
-            if columnName is not None and dataName is not None:
-                self.cursor.execute(f"SELECT * FROM {tableName} WHERE {columnName} = {dataName}")
+            query = f"SELECT * FROM {tableName}"
 
-                print(f"Listas de los datos de la tabla {tableName}:")
+            if columnName and dataName:
+                query += f" WHERE {columnName} = '{dataName}'"
 
-                for i in self.cursor.fetchall():
-                    self.result.append(i)
-                    print(f"  - {i}.")
-            else:
-                self.cursor.execute(f"SELECT * FROM {tableName}")
+            self.cursor.execute(query)
 
-                print(f"Listas de los datos de la tabla {tableName}:")
+            self.state = "200"
+            self.message = "Ok"
+            print(f"Lists of data from table {tableName}:")
+            for data in self.cursor.fetchall():
+                self.result.append(data)
+                print(f"  - {data}.")
 
-                for i in self.cursor.fetchall():
-                    self.result.append(i)
-                    print(f"  - {i}.")
-        except:
-            print(f"ERROR: Error al obtener los datos de la tabla {tableName}")
+            
+        except mysql.connector.Error as e:
+            self.state = "500"
+            self.message = "Internal Server Error" 
+            self.information=f"ERROR: Error getting data from table {tableName}"
+            print(f"ERROR: Error getting data from table {tableName}")
+            print(f"ERROR_TYPE: {e}")
     
     @connection
     @validation_db
@@ -132,26 +131,21 @@ class DataBase():
                 print("los datos están vacíos")
                 return
 
-            column_list = data.keys()
-            value_list = data.values()
-            column_string = ""
-            value_string = ""
+            columns = ", ".join(data.keys())
+            values = ", ".join(f"'{v}'" for v in data.values())
 
-            for column in column_list:
-                column_string += f"{column}, "
-            
-            for value in value_list:
-                value_string += f"{value}, "
-
-            column_string = column_string[:-2]
-            value_string = value_string[:-2]
-
-            self.cursor.execute(f"INSERT INTO {tableName}({column_string}) VALUES({value_string})")
+            self.cursor.execute(f"INSERT INTO {tableName}({columns}) VALUES({values})")
             self.conector.commit()
 
-            print("Datos inyectados")
-        except:
-            print("ERROR: No se puedo inyectar los datos")
+            self.state = "201"
+            self.message = "Created"
+            print("Injected data")
+        except mysql.connector.Error as e:
+            self.state = "500"
+            self.message = "Internal Server Error"
+            self.information=f"ERROR: Could not inject data into table {tableName}"
+            print(f"ERROR: Could not inject data into table {tableName}")
+            print(f"ERROR_TYPE: {e}")
 
     @connection
     @validation_db
@@ -165,9 +159,15 @@ class DataBase():
             self.cursor.execute(f"DELETE FROM {tableName} WHERE {condition}")
             self.conector.commit()
 
-            print("Datos eliminados")
-        except:
-            print("ERROR: No se puedo eliminar los datos")
+            self.state = "200"
+            self.message = "Ok"
+            print("Delete data")
+        except mysql.connector.Error as e:
+            self.state = "500"
+            self.message = "Internal Server Error"
+            self.information=f"ERROR: Could not delete data in table {tableName}"
+            print(f"ERROR: Could not delete data in table {tableName}")
+            print(f"ERROR_TYPE: {e}")
 
     @connection
     @validation_db
@@ -185,21 +185,38 @@ class DataBase():
             self.cursor.execute(f"UPDATE {tableName} SET {data} WHERE {condition}")
             self.conector.commit()
 
-            print("Datos actualizados")
-        except:
-            print("ERROR: No se puedo eliminar los datos")
+            self.state = "200"
+            self.message = "Ok"
+            print("Update data")
+        except mysql.connector.Error as e:
+            self.state = "500"
+            self.message = "Internal Server Error"
+            self.information=f"ERROR: Could not update data in table {tableName}"
+            print(f"ERROR: Could not update data in table {tableName}")
+            print(f"ERROR_TYPE: {e}")
 
     @connection
     @validation_db
     def backup_db(self, base_dir):
-        backup_dir = os.path.join(base_dir, "backup")
-        data = datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S")
+        try:
+            backup_dir = os.path.join(base_dir, "backup")
+            date_str = datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S")
+            backup_file = f"{self.__database}_{date_str}.sql"
+            backup_path = os.path.join(backup_dir, backup_file)
 
-        with open(f'{backup_dir}/{self.__database}_{data}.sql', 'w') as out:
-            subprocess.Popen(
-                f'"C:\Program Files\MySQL\MySQL Workbench 8.0/"mysqldump --user={self.user} --password={self.password} --databases {self.__database}',
-                shell=True,
-                stdout=out
-            )
-
-        print(f"Se creo la la copia de seguridad con el nombre {self.__database}_{data}.sql")
+            with open(backup_path, 'w') as out:
+                subprocess.Popen(
+                    f'"C:\Program Files\MySQL\MySQL Workbench 8.0/"mysqldump --user={self.__user} --password={self.__password} --databases {self.__database}',
+                    shell=True,
+                    stdout=out
+                )
+                
+            self.state = "200"
+            self.message = "Ok"
+            print(f"The backup was created with the name {backup_file}")
+        except Exception as e:
+            self.state = "500"
+            self.message = "Internal Server Error"
+            self.information=f"ERROR: Could not create backup"
+            print(f"ERROR: Could not create backup")
+            print(f"ERROR_TYPE: {e}")
