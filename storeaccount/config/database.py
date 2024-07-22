@@ -60,8 +60,8 @@ class DataBase():
         return internal
 
     def validation_table(function):
-        def internal(self, tableName, *args, **kwargs):
-            self.cursor.execute(f"SHOW TABLES LIKE '{tableName}'")
+        def internal(self, table, *args, **kwargs):
+            self.cursor.execute(f"SHOW TABLES LIKE '{table}'")
 
             if not self.cursor.fetchone():
                 self.state = "500"
@@ -71,19 +71,19 @@ class DataBase():
 
                 return
 
-            return function(self, tableName, *args, **kwargs)
+            return function(self, table, *args, **kwargs)
         return internal
 
     @connection
     @validation_db
     @validation_table
-    def get_column(self, tableName):
+    def get_column(self, table):
         try:
-            self.cursor.execute(f"SHOW COLUMNS FROM {tableName}")
+            self.cursor.execute(f"SHOW COLUMNS FROM {table}")
 
             self.state = "200"
             self.message = "Ok"
-            print(f"Lists of columns from table {tableName}:")
+            print(f"Lists of columns from table {table}:")
 
             for column in self.cursor.fetchall():
                 self.result.append(column)
@@ -91,25 +91,29 @@ class DataBase():
         except mysql.connector.Error as e:
             self.state = "500"
             self.message = "Internal Server Error"
-            self.information=f"ERROR: Error getting columns from table {tableName}"
-            print(f"ERROR: Error getting columns from table {tableName}")
+            self.information=f"ERROR: Error getting columns from table {table}"
+            print(f"ERROR: Error getting columns from table {table}")
             print(f"ERROR_TYPE: {e}")
 
     @connection
     @validation_db
     @validation_table
-    def get_data(self, tableName, columnName=None, dataName=None):
+    def get_data(self, table, column=None, condition=None):
         try:
-            query = f"SELECT * FROM {tableName}"
-
-            if columnName and dataName:
-                query += f" WHERE {columnName} = '{dataName}'"
+            if not column and not condition:
+                query = f"SELECT * FROM {table}"
+            elif column and not condition:
+                query = f"SELECT {column} FROM {table} ORDER BY {column} DESC"
+            elif not column and condition:
+                query = f"SELECT * FROM {table} WHERE {condition}"
+            elif column and condition:
+                query = f"SELECT {column} FROM {table} WHERE {condition}"
 
             self.cursor.execute(query)
 
             self.state = "200"
             self.message = "Ok"
-            print(f"Lists of data from table {tableName}:")
+            print(f"Lists of data from table {table}:")
             for data in self.cursor.fetchall():
                 self.result.append(data)
                 print(f"  - {data}.")
@@ -118,14 +122,14 @@ class DataBase():
         except mysql.connector.Error as e:
             self.state = "500"
             self.message = "Internal Server Error" 
-            self.information=f"ERROR: Error getting data from table {tableName}"
-            print(f"ERROR: Error getting data from table {tableName}")
+            self.information=f"ERROR: Error getting data from table {table}"
+            print(f"ERROR: Error getting data from table {table}")
             print(f"ERROR_TYPE: {e}")
     
     @connection
     @validation_db
     @validation_table
-    def post_data(self, tableName, data):
+    def post_data(self, table, data):
         try:
             if not data:
                 print("los datos están vacíos")
@@ -134,7 +138,7 @@ class DataBase():
             columns = ", ".join(data.keys())
             values = ", ".join(f"'{v}'" for v in data.values())
 
-            self.cursor.execute(f"INSERT INTO {tableName}({columns}) VALUES({values})")
+            self.cursor.execute(f"INSERT INTO {table}({columns}) VALUES({values})")
             self.conector.commit()
 
             self.state = "201"
@@ -143,20 +147,20 @@ class DataBase():
         except mysql.connector.Error as e:
             self.state = "500"
             self.message = "Internal Server Error"
-            self.information=f"ERROR: Could not inject data into table {tableName}"
-            print(f"ERROR: Could not inject data into table {tableName}")
+            self.information=f"ERROR: Could not inject data into table {table}"
+            print(f"ERROR: Could not inject data into table {table}")
             print(f"ERROR_TYPE: {e}")
 
     @connection
     @validation_db
     @validation_table
-    def delete_data(self, tableName, condition):
+    def delete_data(self, table, condition):
         try:
             if not condition:
                 print("los condiciones están vacíos")
                 return
 
-            self.cursor.execute(f"DELETE FROM {tableName} WHERE {condition}")
+            self.cursor.execute(f"DELETE FROM {table} WHERE {condition}")
             self.conector.commit()
 
             self.state = "200"
@@ -165,14 +169,14 @@ class DataBase():
         except mysql.connector.Error as e:
             self.state = "500"
             self.message = "Internal Server Error"
-            self.information=f"ERROR: Could not delete data in table {tableName}"
-            print(f"ERROR: Could not delete data in table {tableName}")
+            self.information=f"ERROR: Could not delete data in table {table}"
+            print(f"ERROR: Could not delete data in table {table}")
             print(f"ERROR_TYPE: {e}")
 
     @connection
     @validation_db
     @validation_table
-    def update_data(self, tableName, data, condition):
+    def update_data(self, table, data, condition):
         try:
             if not data:
                 print("los datos están vacíos")
@@ -182,7 +186,7 @@ class DataBase():
                 print("los condiciones están vacíos")
                 return
 
-            self.cursor.execute(f"UPDATE {tableName} SET {data} WHERE {condition}")
+            self.cursor.execute(f"UPDATE {table} SET {data} WHERE {condition}")
             self.conector.commit()
 
             self.state = "200"
@@ -191,8 +195,8 @@ class DataBase():
         except mysql.connector.Error as e:
             self.state = "500"
             self.message = "Internal Server Error"
-            self.information=f"ERROR: Could not update data in table {tableName}"
-            print(f"ERROR: Could not update data in table {tableName}")
+            self.information=f"ERROR: Could not update data in table {table}"
+            print(f"ERROR: Could not update data in table {table}")
             print(f"ERROR_TYPE: {e}")
 
     @connection

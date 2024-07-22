@@ -55,6 +55,7 @@ INSERT INTO monthly(month, sales, supplierExpenses, overheads, total, yearlyID) 
 INSERT INTO monthly(month, sales, supplierExpenses, overheads, total, yearlyID) VALUES(4, 4000000.0, 4000000.0, 4000000.0, 4000000.0, 1);
 INSERT INTO monthly(month, sales, supplierExpenses, overheads, total, yearlyID) VALUES(5, 5000000.0, 5000000.0, 5000000.0, 5000000.0, 1);
 INSERT INTO monthly(month, sales, supplierExpenses, overheads, total, yearlyID) VALUES(6, 6000000.0, 6000000.0, 6000000.0, 6000000.0, 1);
+INSERT INTO monthly(month, sales, supplierExpenses, overheads, total, yearlyID) VALUES(7, 7000000.0, 7000000.0, 7000000.0, 7000000.0, 1);
 INSERT INTO monthly(month, sales, supplierExpenses, overheads, total, yearlyID) VALUES(1, 1000000.0, 1000000.0, 1000000.0, 1000000.0, 2);
 INSERT INTO monthly(month, sales, supplierExpenses, overheads, total, yearlyID) VALUES(2, 2000000.0, 2000000.0, 2000000.0, 2000000.0, 2);
 INSERT INTO monthly(month, sales, supplierExpenses, overheads, total, yearlyID) VALUES(3, 3000000.0, 3000000.0, 3000000.0, 3000000.0, 2);
@@ -80,6 +81,11 @@ INSERT INTO diary(day, sales, supplierExpenses, overheads, total, monthlyID) VAL
 INSERT INTO diary(day, sales, supplierExpenses, overheads, total, monthlyID) VALUES(14, 2000000.0, 2000000.0, 2000000.0, 2000000.0, 5);
 INSERT INTO diary(day, monthlyID) VALUES(15, 6);
 
+USE storeaccount;
+
 SELECT * FROM diary;
 SELECT * FROM monthly;
 SELECT * FROM yearly;
+
+-- SELECT * FROM diary WHERE id='33';
+-- DELETE FROM diary WHERE id='33';

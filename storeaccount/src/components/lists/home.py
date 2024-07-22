@@ -12,7 +12,7 @@ class HomeList(ft.ExpansionPanelList):
         return [self.create_expansion_panel(data) for data in yearly_data]
 
     def create_expansion_panel(self, yearly_data):
-        monthly_data = self.__db.get_data("monthly", "yearlyID", yearly_data[0])
+        monthly_data = self.__db.get_data("monthly", condition=f"yearlyID = '{yearly_data[0]}'")
         data_rows = self.create_data_rows(monthly_data)
 
         return ft.ExpansionPanel(

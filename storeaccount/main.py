@@ -25,14 +25,14 @@ if __name__ == '__main__':
     def main(page: ft.Page):
         page.title = "CuentasTienda"
         page.padding = 0
-        #page.bgcolor = ft.colors.BLUE_GREY_200
 
         page.appbar = Navbar(page)
 
         def route_change(e):
             page.views.clear()
-            page.views.append(HomeView(db, page))
             match page.route:
+                case "/":
+                    page.views.append(HomeView(db, page))
                 case "/diary":
                     page.views.append(
                         ft.View(

@@ -13,7 +13,7 @@ class Navbar(ft.AppBar):
             text_align="start"
         )
         self.center_title=False
-        self.toolbar_height=50
+        self.toolbar_height=60
         self.bgcolor=ft.colors.PURPLE_400
         self.actions=[
             ft.TextButton(text="home", on_click=lambda e:page.go("/")),

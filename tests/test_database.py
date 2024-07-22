@@ -36,18 +36,24 @@ class TestDatabase():
             assert self.db.result != None
 
     @pytest.mark.parametrize(
-        "table, column, data, expected",
+        "table, column, condition, expected",
         [
             ("diary", None, None, "200"), 
             ("monthly", None, None, "200"), 
             ("yearly", None, None, "200"), 
+            ("diary", "day", None, "200"), 
+            ("monthly", "month", None, "200"), 
+            ("yearly", "year", None, "200"),
+            ("diary", None, "monthlyID='1'", "200"), 
+            ("monthly", None, "yearlyID='1'", "200"), 
+            ("yearly", None, "id='1'", "200"),
+            ("diary", "day", "id='1'", "200"), 
+            ("monthly", "month", "id='1'", "200"), 
+            ("yearly", "year", "id='1'", "200"),
             ("notExist", None, None, "500"), 
-            ("diary", "monthlyID", 1, "200"), 
-            ("monthly", "yearlyID", 1, "200"), 
-            ("yearly", "id", 1, "200"),
         ])
-    def test_get_data(self, table, column, data, expected):
-        self.db.get_data(table, column, data)
+    def test_get_data(self, table, column, condition, expected):
+        self.db.get_data(table, column=column, condition=condition)
 
         assert self.db.state == expected
         if self.db.state == expected:
