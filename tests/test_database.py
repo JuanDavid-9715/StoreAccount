@@ -38,22 +38,45 @@ class TestDatabase():
     @pytest.mark.parametrize(
         "table, column, condition, expected",
         [
-            ("diary", None, None, "200"), 
-            ("monthly", None, None, "200"), 
-            ("yearly", None, None, "200"), 
+            ("diary", "*", None, "200"), 
+            ("monthly", "*", None, "200"), 
+            ("yearly", "*", None, "200"), 
             ("diary", "day", None, "200"), 
             ("monthly", "month", None, "200"), 
             ("yearly", "year", None, "200"),
-            ("diary", None, "monthlyID='1'", "200"), 
-            ("monthly", None, "yearlyID='1'", "200"), 
-            ("yearly", None, "id='1'", "200"),
+            ("diary", "*", "monthlyID='1'", "200"), 
+            ("monthly", "*", "yearlyID='1'", "200"), 
+            ("yearly", "*", "id='1'", "200"),
             ("diary", "day", "id='1'", "200"), 
             ("monthly", "month", "id='1'", "200"), 
             ("yearly", "year", "id='1'", "200"),
-            ("notExist", None, None, "500"), 
+            ("notExist", "*", None, "500"), 
         ])
     def test_get_data(self, table, column, condition, expected):
         self.db.get_data(table, column=column, condition=condition)
+
+        assert self.db.state == expected
+        if self.db.state == expected:
+            assert type(self.db.result) == list
+            assert self.db.result != None
+
+    @pytest.mark.parametrize(
+        "table, order_by, column, condition, address, expected",
+        [
+            ("diary", "day", "*", None, "ASC", "200"), 
+            ("monthly", "month", "*", None, "ASC", "200"), 
+            ("yearly", "year", "*", None, "ASC", "200"), 
+            ("diary", "day", "*", None, "DESC", "200"), 
+            ("monthly", "month", "*", None, "DESC", "200"), 
+            ("yearly", "year", "*", None, "DESC", "200"), 
+            ("diary", "day", "*", "monthlyID='1'", "ASC", "200"), 
+            ("monthly", "month", "*", "yearlyID='1'", "ASC", "200"), 
+            ("diary", "day", "*", "monthlyID='1'", "DESC", "200"), 
+            ("monthly", "month", "*", "yearlyID='1'", "DESC", "200"), 
+            ("notExist", "", "*", None, "ASC", "500"), 
+        ])
+    def test_get_data_orderBy(self, table, order_by, column, condition, address, expected):
+        self.db.get_data_orderBy(table, order_by, column=column, condition=condition, address=address)
 
         assert self.db.state == expected
         if self.db.state == expected:

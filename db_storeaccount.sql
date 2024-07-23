@@ -87,5 +87,8 @@ SELECT * FROM diary;
 SELECT * FROM monthly;
 SELECT * FROM yearly;
 
+SELECT * FROM yearly ORDER BY year ASC;
+SELECT * FROM monthly WHERE yearlyID='2' ORDER BY month ASC;
+
 -- SELECT * FROM diary WHERE id='33';
 -- DELETE FROM diary WHERE id='33';

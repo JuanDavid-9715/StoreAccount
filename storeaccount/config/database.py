@@ -98,16 +98,12 @@ class DataBase():
     @connection
     @validation_db
     @validation_table
-    def get_data(self, table, column=None, condition=None):
+    def get_data(self, table, column='*', condition=None):
         try:
-            if not column and not condition:
-                query = f"SELECT * FROM {table}"
-            elif column and not condition:
-                query = f"SELECT {column} FROM {table} ORDER BY {column} DESC"
-            elif not column and condition:
-                query = f"SELECT * FROM {table} WHERE {condition}"
-            elif column and condition:
-                query = f"SELECT {column} FROM {table} WHERE {condition}"
+            query = f"SELECT {column} FROM {table}"
+
+            if condition:
+                query += f" WHERE {condition}"
 
             self.cursor.execute(query)
 
@@ -117,7 +113,60 @@ class DataBase():
             for data in self.cursor.fetchall():
                 self.result.append(data)
                 print(f"  - {data}.")
+            
+        except mysql.connector.Error as e:
+            self.state = "500"
+            self.message = "Internal Server Error" 
+            self.information=f"ERROR: Error getting data from table {table}"
+            print(f"ERROR: Error getting data from table {table}")
+            print(f"ERROR_TYPE: {e}")
 
+    @connection
+    @validation_db
+    @validation_table
+    def get_data(self, table, column='*', condition=None):
+        try:
+            query = f"SELECT {column} FROM {table}"
+
+            if condition:
+                query += f" WHERE {condition}"
+
+            self.cursor.execute(query)
+
+            self.state = "200"
+            self.message = "Ok"
+            print(f"Lists of data from table {table}:")
+            for data in self.cursor.fetchall():
+                self.result.append(data)
+                print(f"  - {data}.")
+            
+        except mysql.connector.Error as e:
+            self.state = "500"
+            self.message = "Internal Server Error" 
+            self.information=f"ERROR: Error getting data from table {table}"
+            print(f"ERROR: Error getting data from table {table}")
+            print(f"ERROR_TYPE: {e}")
+
+    @connection
+    @validation_db
+    @validation_table
+    def get_data_orderBy(self, table, order_by, column='*',  condition=None, address="ASC"):
+        try:
+            query = f"SELECT {column} FROM {table}"
+
+            if condition:
+                query += f" WHERE {condition}"
+
+            query += f" ORDER BY {order_by} {address}"
+
+            self.cursor.execute(query)
+
+            self.state = "200"
+            self.message = "Ok"
+            print(f"Lists of data from table {table}:")
+            for data in self.cursor.fetchall():
+                self.result.append(data)
+                print(f"  - {data}.")
             
         except mysql.connector.Error as e:
             self.state = "500"
