@@ -1,5 +1,6 @@
 import flet as ft
 
+from src.components.utilities import get_month
 
 class HomeList(ft.ExpansionPanelList):
     def __init__(self, db):
@@ -55,7 +56,7 @@ class HomeList(ft.ExpansionPanelList):
         return [
             ft.DataRow(
                 cells=[
-                    ft.DataCell(ft.Text(month[1])),
+                    ft.DataCell(ft.Text(get_month(month[1]))),
                     ft.DataCell(ft.Text(month[2])),
                     ft.DataCell(ft.Text(month[3])),
                     ft.DataCell(ft.Text(month[4])),

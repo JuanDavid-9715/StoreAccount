@@ -7,6 +7,9 @@ from config.database import DataBase
 from src.components.navbar import Navbar
 
 from src.view.homeView import HomeView
+from src.view.diaryView import DiaryView
+from src.view.monthlyView import MonthlyView
+from src.view.yearView import YearView
 
 load_dotenv()
 
@@ -34,35 +37,11 @@ if __name__ == '__main__':
                 case "/":
                     page.views.append(HomeView(db, page))
                 case "/diary":
-                    page.views.append(
-                        ft.View(
-                            "/diary",
-                            [
-                                page.appbar,
-                                ft.Text("diary"),
-                            ],
-                        )
-                    )
+                    page.views.append(DiaryView(db, page))
                 case "/monthly":
-                    page.views.append(
-                        ft.View(
-                            "/monthly",
-                            [
-                                page.appbar,
-                                ft.Text("monthly"),
-                            ],
-                        )
-                    )
+                    page.views.append(MonthlyView(db, page))
                 case "/yearly":
-                    page.views.append(
-                        ft.View(
-                            "/yearly",
-                            [
-                                page.appbar,
-                                ft.Text("yearly"),
-                            ],
-                        )
-                    )
+                    page.views.append(YearView(db, page))
             page.update()
 
         def view_pop(self, e):    
