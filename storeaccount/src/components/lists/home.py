@@ -9,11 +9,17 @@ class HomeList(ft.ExpansionPanelList):
         self.controls = self.get_expansion_panel_list()
 
     def get_expansion_panel_list(self):
-        yearly_data = self.__db.get_data_orderBy("yearly", "year", address="DESC")
+        yearly_data = self.__db.get_data(
+            "yearly", 
+            order_by="year DESC"
+        )
         return [self.create_expansion_panel(data) for data in yearly_data]
 
     def create_expansion_panel(self, yearly_data):
-        monthly_data = self.__db.get_data_orderBy("monthly", "month", condition=f"yearlyID = '{yearly_data[0]}'")
+        monthly_data = self.__db.get_data(
+            "monthly", 
+            order_by="month", 
+            condition=f"yearlyID = '{yearly_data[0]}'")
         data_rows = self.create_data_rows(monthly_data)
 
         return ft.ExpansionPanel(
