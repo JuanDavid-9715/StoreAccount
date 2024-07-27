@@ -31,9 +31,23 @@ class TestDatabase():
         self.db.get_column(table)
 
         assert self.db.state == expected
-        if self.db.state == expected:
-            assert type(self.db.result) == list
-            assert self.db.result != None
+        assert type(self.db.result) == list
+        assert self.db.result != None
+
+    @pytest.mark.parametrize(
+        "table, expected",
+        [
+            ("diary", "200"), 
+            ("monthly", "200"), 
+            ("yearly", "200"), 
+            ("notExist", "500"),
+        ])
+    def test_get_length(self, table, expected):
+        self.db.get_length(table)
+
+        assert self.db.state == expected
+        if self.db.state == "200":
+            assert type(self.db.result[0][0]) == int
 
     @pytest.mark.parametrize(
         "table, column, join, condition, order_by, limit, expected",
@@ -74,9 +88,8 @@ class TestDatabase():
         self.db.get_data(table, column=column, join=join, condition=condition, order_by=order_by, limit=limit)
 
         assert self.db.state == expected
-        if self.db.state == expected:
-            assert type(self.db.result) == list
-            assert self.db.result != None
+        assert type(self.db.result) == list
+        assert self.db.result != None
 
     @pytest.mark.parametrize(
         "table, data, expected",

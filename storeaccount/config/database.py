@@ -98,6 +98,27 @@ class DataBase():
     @connection
     @validation_db
     @validation_table
+    def get_length(self, table):
+        try:
+            self.cursor.execute(f"SELECT COUNT(*) FROM {table}")
+
+            self.state = "200"
+            self.message = "Ok"
+            print(f"The length of table {table} is:")
+            
+            for column in self.cursor.fetchall():
+                self.result.append(column)
+                print(f"  - {column[0]}.")
+        except mysql.connector.Error as e:
+            self.state = "500"
+            self.message = "Internal Server Error"
+            self.information=f"ERROR: Error getting length from table {table}"
+            print(f"ERROR: Error getting length from table {table}")
+            print(f"ERROR_TYPE: {e}")
+
+    @connection
+    @validation_db
+    @validation_table
     def get_data(self, table, column='*', join=False, condition=None, order_by=None, limit=None):
         try:
             query = f"SELECT {column} FROM {table}"
@@ -114,7 +135,6 @@ class DataBase():
             elif limit:
                 query += f" LIMIT {limit}"
             
-            print(query)
             self.cursor.execute(query)
 
             self.state = "200"
