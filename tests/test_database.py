@@ -36,47 +36,42 @@ class TestDatabase():
             assert self.db.result != None
 
     @pytest.mark.parametrize(
-        "table, column, condition, expected",
+        "table, column, join, condition, order_by, limit, expected",
         [
-            ("diary", "*", None, "200"), 
-            ("monthly", "*", None, "200"), 
-            ("yearly", "*", None, "200"), 
-            ("diary", "day", None, "200"), 
-            ("monthly", "month", None, "200"), 
-            ("yearly", "year", None, "200"),
-            ("diary", "*", "monthlyID='1'", "200"), 
-            ("monthly", "*", "yearlyID='1'", "200"), 
-            ("yearly", "*", "id='1'", "200"),
-            ("diary", "day", "id='1'", "200"), 
-            ("monthly", "month", "id='1'", "200"), 
-            ("yearly", "year", "id='1'", "200"),
-            ("notExist", "*", None, "500"), 
-        ])
-    def test_get_data(self, table, column, condition, expected):
-        self.db.get_data(table, column=column, condition=condition)
+            ("diary", "*", False, None, None, None, "200"), 
+            ("monthly", "*", False, None, None, None, "200"), 
+            ("yearly", "*", False, None, None, None, "200"),
 
-        assert self.db.state == expected
-        if self.db.state == expected:
-            assert type(self.db.result) == list
-            assert self.db.result != None
+            ("diary", "day", False, None, None, None, "200"), 
+            ("monthly", "month", False, None, None, None, "200"), 
+            ("yearly", "year", False, None, None, None, "200"),
 
-    @pytest.mark.parametrize(
-        "table, order_by, column, condition, address, expected",
-        [
-            ("diary", "day", "*", None, "ASC", "200"), 
-            ("monthly", "month", "*", None, "ASC", "200"), 
-            ("yearly", "year", "*", None, "ASC", "200"), 
-            ("diary", "day", "*", None, "DESC", "200"), 
-            ("monthly", "month", "*", None, "DESC", "200"), 
-            ("yearly", "year", "*", None, "DESC", "200"), 
-            ("diary", "day", "*", "monthlyID='1'", "ASC", "200"), 
-            ("monthly", "month", "*", "yearlyID='1'", "ASC", "200"), 
-            ("diary", "day", "*", "monthlyID='1'", "DESC", "200"), 
-            ("monthly", "month", "*", "yearlyID='1'", "DESC", "200"), 
-            ("notExist", "", "*", None, "ASC", "500"), 
+            ("diary", "*", True, None, None, None, "200"), 
+            ("monthly", "*", True, None, None, None, "200"),
+            ("yearly", "*", True, None, None, None, "200"),
+
+            ("diary", "*", False, "monthlyID='1'", None, None, "200"), 
+            ("monthly", "*", False, "yearlyID='1'", None, None, "200"), 
+
+            ("diary", "*", False, None, "day DESC", None, "200"), 
+            ("monthly", "*", False, None, "month DESC", None, "200"), 
+            ("yearly", "*", False, None, "year DESC", None, "200"),
+
+            ("diary", "*", False, None, None, "1,10", "200"), 
+            ("monthly", "*", False, None, None, "1,10", "200"), 
+            ("yearly", "*", False, None, None, "1,4", "200"),
+
+            ("diary", "day", True, None, "day DESC, month DESC, year DESC", "1,10", "200"), 
+            ("monthly", "month", True, None, "month DESC, year DESC", "1,10", "200"), 
+            ("yearly", "year", False, None, "year DESC", "1,4", "200"),
+
+            ("notExistTable", "*", False, None, None, None, "500"), 
+            ("diary", "notExistColumn", False, None, None, None, "500"),
+            ("diary", "*", False, "notExistColumn='1'", None, None, "500"),
+            ("notExistTable", "*", False, None, "notExistColumn DESC", None, "500"), 
         ])
-    def test_get_data_orderBy(self, table, order_by, column, condition, address, expected):
-        self.db.get_data_orderBy(table, order_by, column=column, condition=condition, address=address)
+    def test_get_data(self, table, column, join, condition, order_by, limit, expected):
+        self.db.get_data(table, column=column, join=join, condition=condition, order_by=order_by, limit=limit)
 
         assert self.db.state == expected
         if self.db.state == expected:
