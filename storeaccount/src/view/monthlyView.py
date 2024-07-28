@@ -1,7 +1,7 @@
 import flet as ft
 
 # from src.components.form.home import HomeFrom
-from src.components.lists.monthly import MonthlyList
+from src.components.paginator import Paginator
 
 class MonthlyView(ft.View):
     def __init__(self, db, page):
@@ -13,9 +13,7 @@ class MonthlyView(ft.View):
         self.appbar=page.appbar
         self.controls=[
             ft.Container(
-                ft.ResponsiveRow([
-                    MonthlyList(self.__db),
-                ]),
+                Paginator(self.__db, self.__page, self.route),
                 padding=ft.padding.symmetric(horizontal=20),
-            ),
+            )
         ]

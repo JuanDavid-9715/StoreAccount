@@ -1,7 +1,7 @@
 import flet as ft
 
 from src.components.form.home import HomeFrom
-from src.components.lists.home import HomeList
+from src.components.table.home import HomeTable
 
 class HomeView(ft.View):
     def __init__(self, db, page):
@@ -17,7 +17,7 @@ class HomeView(ft.View):
                 padding=ft.padding.symmetric(vertical=30, horizontal=20),
             ),
             ft.Container(
-                HomeList(self.__db),
+                HomeTable(self.__db),
                 padding=ft.padding.symmetric(horizontal=20),
             ),
         ]

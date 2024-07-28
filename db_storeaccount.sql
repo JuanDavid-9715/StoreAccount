@@ -106,16 +106,31 @@ SELECT * FROM diary;
 SELECT * FROM monthly;
 SELECT * FROM yearly;
 
-SELECT diary.id, diary.day, diary.monthlyID, monthly.id, monthly.month, monthly.yearlyID, yearly.id, yearly.year
+SELECT diary.day, monthly.month, yearly.year, diary.id, diary.monthlyID, monthly.id, monthly.yearlyID, yearly.id
 FROM diary
 JOIN monthly ON diary.monthlyID=monthly.id
 JOIN yearly ON monthly.yearlyID=yearly.id
-ORDER BY yearly.year DESC, monthly.month DESC, diary.day DESC;
+ORDER BY yearly.year DESC, monthly.month DESC, diary.day DESC
+LIMIT 1,20;
 
-SELECT * FROM diary ORDER BY day DESC;
-SELECT * FROM diary ORDER BY day DESC LIMIT 1, 5;
-SELECT * FROM diary ORDER BY day DESC LIMIT 6, 10;
-SELECT * FROM diary ORDER BY day DESC LIMIT 11, 15;
+SELECT diary.day, monthly.month, yearly.year, diary.id, diary.monthlyID, monthly.id, monthly.yearlyID, yearly.id
+FROM diary
+JOIN monthly ON diary.monthlyID=monthly.id
+JOIN yearly ON monthly.yearlyID=yearly.id
+ORDER BY yearly.year DESC, monthly.month DESC, diary.day DESC
+LIMIT 6,5;
+
+SELECT diary.id, diary.day, monthly.month, yearly.year, diary.sales, diary.supplierExpenses, diary.overheads, diary.total
+FROM diary
+JOIN monthly ON diary.monthlyID=monthly.id
+JOIN yearly ON monthly.yearlyID=yearly.id
+ORDER BY yearly.year DESC, monthly.month DESC, diary.day DESC
+LIMIT 1,10;
+
+SELECT COUNT(*) FROM diary;
+SELECT COUNT(*) FROM monthly;
+SELECT COUNT(*) FROM yearly;
+
 
 -- SELECT id, year FROM yearly ORDER BY year DESC;
 -- SELECT * FROM monthly WHERE yearlyID='2' ORDER BY month ASC;

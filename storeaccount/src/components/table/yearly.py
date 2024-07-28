@@ -1,9 +1,10 @@
 import flet as ft
 
 
-class YearList(ft.DataTable):
-    def __init__(self, db):
+class YearTable(ft.DataTable):
+    def __init__(self, db, paginator):
         self.__db=db
+        self.paginator=paginator
         columns=self.create_column()
         rows=self.get_data_row_year()
         super().__init__(columns=columns, rows=rows)
@@ -23,19 +24,18 @@ class YearList(ft.DataTable):
     def get_data_row_year(self):
         data_rows = []
 
-        yearly_data = self.__fetch_yearly_data()
+        data_list = self.__db.get_data(
+            "yearly",
+            column="yearly.id, yearly.year, yearly.sales, yearly.supplierExpenses, yearly.overheads, yearly.total",
+            join=True,
+            order_by="yearly.year DESC",
+            limit=self.paginator,
+        )
 
-        for yearly in yearly_data:
-            data_rows.append(self.create_data_row(yearly))
+        for dato in data_list:
+            data_rows.append(self.create_data_row(dato))
 
         return data_rows
-
-    def __fetch_yearly_data(self):
-        return self.__db.get_data_orderBy(
-            "yearly", 
-            "year", 
-            address="DESC"
-        )
 
     def create_column(self):
         return [
@@ -48,21 +48,21 @@ class YearList(ft.DataTable):
             ft.DataColumn(ft.Text("")),
         ]
 
-    def create_data_row(self, yearly):
+    def create_data_row(self, dato):
         return ft.DataRow(
                 cells=[
-                    ft.DataCell(ft.Text(yearly[1])),
-                    ft.DataCell(ft.Text(yearly[2])),
-                    ft.DataCell(ft.Text(yearly[3])),
-                    ft.DataCell(ft.Text(yearly[4])),
-                    ft.DataCell(ft.Text(yearly[5])),
+                    ft.DataCell(ft.Text(dato[1])),
+                    ft.DataCell(ft.Text(dato[2])),
+                    ft.DataCell(ft.Text(dato[3])),
+                    ft.DataCell(ft.Text(dato[4])),
+                    ft.DataCell(ft.Text(dato[5])),
                     ft.DataCell(
                         ft.IconButton(
                             icon=ft.icons.UPDATE,
                             icon_color=ft.colors.LIGHT_BLUE_600,
                             icon_size=30,
                             on_click=self.update_click, 
-                            data=yearly[0],
+                            data=dato[0],
                         ),
                     ),
                     ft.DataCell(
@@ -71,7 +71,7 @@ class YearList(ft.DataTable):
                             icon_color=ft.colors.PINK_600,
                             icon_size=30,
                             on_click=self.delete_click,
-                            data=yearly[0],
+                            data=dato[0],
                         ),
                     ),
                 ],

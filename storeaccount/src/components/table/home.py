@@ -1,8 +1,8 @@
 import flet as ft
 
-from src.components.utilities import get_month
+from src.utilities.utilities import get_month
 
-class HomeList(ft.ExpansionPanelList):
+class HomeTable(ft.ExpansionPanelList):
     def __init__(self, db):
         super().__init__()
         self.__db=db

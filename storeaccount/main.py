@@ -9,7 +9,7 @@ from src.components.navbar import Navbar
 from src.view.homeView import HomeView
 from src.view.diaryView import DiaryView
 from src.view.monthlyView import MonthlyView
-from src.view.yearView import YearView
+from src.view.yearlyView import YearlyView
 
 load_dotenv()
 
@@ -41,7 +41,7 @@ if __name__ == '__main__':
                 case "/monthly":
                     page.views.append(MonthlyView(db, page))
                 case "/yearly":
-                    page.views.append(YearView(db, page))
+                    page.views.append(YearlyView(db, page))
             page.update()
 
         def view_pop(self, e):    

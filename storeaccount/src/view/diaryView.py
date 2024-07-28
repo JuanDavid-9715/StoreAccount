@@ -1,7 +1,7 @@
 import flet as ft
 
 from src.components.form.diary import DiaryFrom
-from src.components.lists.diary import DiaryList
+from src.components.paginator import Paginator
 
 class DiaryView(ft.View):
     def __init__(self, db, page):
@@ -17,9 +17,7 @@ class DiaryView(ft.View):
                 padding=ft.padding.only(left=20, top=20, right=20),
             ),
             ft.Container(
-                ft.ResponsiveRow([
-                    DiaryList(self.__db),
-                ]),
+                Paginator(self.__db, self.__page, self.route),
                 padding=ft.padding.symmetric(horizontal=20),
-            ),
+            )
         ]

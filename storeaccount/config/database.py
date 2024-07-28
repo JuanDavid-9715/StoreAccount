@@ -128,11 +128,11 @@ class DataBase():
                     query += " JOIN monthly ON diary.monthlyID=monthly.id"
 
                 query += " JOIN yearly ON monthly.yearlyID=yearly.id"
-            elif condition:
+            if condition:
                 query += f" WHERE {condition}"
-            elif order_by:
+            if order_by:
                 query += f" ORDER BY {order_by}"
-            elif limit:
+            if limit:
                 query += f" LIMIT {limit}"
             
             self.cursor.execute(query)
