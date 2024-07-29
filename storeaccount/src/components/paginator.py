@@ -1,8 +1,8 @@
 import flet as ft
 
-from src.components.table.diary import DiaryTable
-from src.components.table.monthly import MonthlyTable
-from src.components.table.yearly import YearTable
+from src.components.tables.diary import DiaryTable
+from src.components.tables.monthly import MonthlyTable
+from src.components.tables.yearly import YearTable
 
 
 class Paginator(ft.Column):
@@ -12,7 +12,7 @@ class Paginator(ft.Column):
         self.__page=page
         self.route=route
         self.length=self.__find_length(self.route)
-        self.paginator_init=1
+        self.paginator_init=0
         self.paginator_step=10
         self.responsiveRow=ft.ResponsiveRow()
         self.paginator=self.update_paginator()
@@ -61,7 +61,7 @@ class Paginator(ft.Column):
         ]
 
     def first_click(self, e):
-        self.paginator_init = 1
+        self.paginator_init = 0
         self.update_paginator()
 
     def previous_click(self, e):
@@ -75,7 +75,7 @@ class Paginator(ft.Column):
             self.update_paginator()
 
     def last_click(self, e):
-        self.paginator_init = int(self.length/10)*10 + 1
+        self.paginator_init = int(self.length/10)*10
         self.update_paginator()
 
     def __find_length(self, table):

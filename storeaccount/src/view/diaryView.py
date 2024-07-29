@@ -1,6 +1,6 @@
 import flet as ft
 
-from src.components.form.diary import DiaryFrom
+from src.components.forms.diary import DiaryFrom
 from src.components.paginator import Paginator
 
 class DiaryView(ft.View):

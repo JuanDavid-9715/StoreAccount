@@ -1,7 +1,7 @@
 import flet as ft
 
-from src.components.form.home import HomeFrom
-from src.components.table.home import HomeTable
+from src.components.forms.home import HomeFrom
+from src.components.tables.home import HomeTable
 
 class HomeView(ft.View):
     def __init__(self, db, page):
