@@ -203,6 +203,7 @@ class DataBase():
     @validation_table
     def update_data(self, table, data, condition):
         try:
+            print("entro")
             if not data:
                 print("los datos están vacíos")
                 return
@@ -211,13 +212,15 @@ class DataBase():
                 print("los condiciones están vacíos")
                 return
 
-            self.cursor.execute(f"UPDATE {table} SET {data} WHERE {condition}")
+            update_data = ", ".join(f"{column}='{value}'" for column, value in data.items())
+
+            self.cursor.execute(f"UPDATE {table} SET {update_data}WHERE {condition}")
             self.conector.commit()
 
             self.state = "200"
             self.message = "Ok"
             print("Update data")
-        except mysql.connector.Error as e:
+        except Exception as e:
             self.state = "500"
             self.message = "Internal Server Error"
             self.information=f"ERROR: Could not update data in table {table}"

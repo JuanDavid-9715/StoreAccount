@@ -155,11 +155,56 @@ class TestDatabase():
     @pytest.mark.parametrize(
         "table, data, condition, expected",
         [
-            ("diary", "sales = '2000000'", "day = 'test'", "200"), 
-            ("monthly", "sales = '2000000'", "month = 'test'", "200"), 
-            ("yearly", "sales = '2000000'", "year = 'test'", "200"), 
-            ("yearly", "sales = 'test'", "year = 'test'", "500"), 
-            ("yearly", "test = 'test'", "year = 'test'", "500"),
+            (
+                "diary",
+                {
+                    "day": "test",
+                    "sales": 1000000.0,
+                    "supplierExpenses": 1000000.0,
+                    "overheads": 1000000.0,
+                    "total": 1000000.0,
+                    "monthlyID": 1,
+                }, 
+                "day = 'test'", 
+                "200",
+            ), 
+            (
+                "monthly", 
+                {
+                    "month": "test",
+                    "sales": 1000000.0,
+                    "supplierExpenses": 1000000.0,
+                    "overheads": 1000000.0,
+                    "total": 1000000.0,
+                    "yearlyID": 1,
+                },
+                "month = 'test'", 
+                "200"
+            ), 
+            (
+                "yearly", 
+                {
+                    "year": "test",
+                    "sales": 1000000.0,
+                    "supplierExpenses": 1000000.0,
+                    "overheads": 1000000.0,
+                    "total": 1000000.0,
+                },
+                "year = 'test'", 
+                "200"
+            ), 
+            (
+                "yearly", 
+                "sales = 'test'", 
+                "year = 'test'", 
+                "500"
+            ), 
+            (
+                "yearly", 
+                "test = 'test'", 
+                "year = 'test'", 
+                "500"
+            ),
             ("notExist", "", "", "500"),
         ])
     def test_update_data(self, table, data, condition, expected):
