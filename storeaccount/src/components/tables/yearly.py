@@ -9,18 +9,6 @@ class YearTable(ft.DataTable):
         rows=self.get_data_row_year()
         super().__init__(columns=columns, rows=rows)
 
-    def update_click(self, e):
-        print("Se presiono el boton update")
-        print(f"e.data: {e.control.data}")
-        yearly = self.__db.get_data("yearly", condition=f"id='{e.control.data}'")
-        print(yearly)
-
-    def delete_click(self, e):
-        print("Se presiono el boton delete")
-        print(f"e.data: {e.control.data}")
-        yearly = self.__db.get_data("yearly", condition=f"id='{e.control.data}'")
-        print(yearly)
-
     def get_data_row_year(self):
         data_rows = []
 
@@ -44,8 +32,6 @@ class YearTable(ft.DataTable):
             ft.DataColumn(ft.Text("Gastos Proveedores")),
             ft.DataColumn(ft.Text("Gastos Generales")),
             ft.DataColumn(ft.Text("Total")),
-            ft.DataColumn(ft.Text("")),
-            ft.DataColumn(ft.Text("")),
         ]
 
     def create_data_row(self, dato):
@@ -56,23 +42,5 @@ class YearTable(ft.DataTable):
                     ft.DataCell(ft.Text(dato[3])),
                     ft.DataCell(ft.Text(dato[4])),
                     ft.DataCell(ft.Text(dato[5])),
-                    ft.DataCell(
-                        ft.IconButton(
-                            icon=ft.icons.UPDATE,
-                            icon_color=ft.colors.LIGHT_BLUE_600,
-                            icon_size=30,
-                            on_click=self.update_click, 
-                            data=dato[0],
-                        ),
-                    ),
-                    ft.DataCell(
-                        ft.IconButton(
-                            icon=ft.icons.DELETE_FOREVER_ROUNDED,
-                            icon_color=ft.colors.PINK_600,
-                            icon_size=30,
-                            on_click=self.delete_click,
-                            data=dato[0],
-                        ),
-                    ),
                 ],
             )

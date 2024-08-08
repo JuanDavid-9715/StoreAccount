@@ -211,8 +211,10 @@ class DataBase():
             if not condition:
                 print("los condiciones están vacíos")
                 return
-
+            print("verificaciones hecha")
             update_data = ", ".join(f"{column}='{value}'" for column, value in data.items())
+            print(f"update_data = {update_data}")
+            print(f"condition = {condition}")
 
             self.cursor.execute(f"UPDATE {table} SET {update_data}WHERE {condition}")
             self.conector.commit()

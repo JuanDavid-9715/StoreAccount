@@ -1,10 +1,12 @@
 import flet as ft
 
+from src.components.forms.update import DiaryUpdate
 from src.utilities.utilities import get_month
 
 class DiaryTable(ft.DataTable):
-    def __init__(self, db, paginator):
+    def __init__(self, db, page, paginator):
         self.__db=db
+        self.__page=page
         self.paginator=paginator
         self.icon_size=18
         columns=self.create_column()
@@ -14,8 +16,8 @@ class DiaryTable(ft.DataTable):
     def update_click(self, e):
         print("Se presiono el botón update")
         print(f"e.data: {e.control.data}")
-        diary = self.__db.get_data("diary", condition=f"id='{e.control.data}'")
-        print(diary)
+        """ diary = self.__db.get_data("diary", condition=f"id='{e.control.data}'")
+        print(diary) """
 
     def delete_click(self, e):
         print("Se presiono el botón delete")
@@ -64,13 +66,7 @@ class DiaryTable(ft.DataTable):
                     ft.DataCell(ft.Text(data[6])),
                     ft.DataCell(ft.Text(data[7])),
                     ft.DataCell(
-                        ft.IconButton(
-                            icon=ft.icons.UPDATE,
-                            icon_color=ft.colors.LIGHT_BLUE_600,
-                            icon_size=self.icon_size,
-                            on_click=self.update_click, 
-                            data=data[0],
-                        ),
+                        DiaryUpdate(self.__db, self.__page, data, self.icon_size)
                     ),
                     ft.DataCell(
                         ft.IconButton(

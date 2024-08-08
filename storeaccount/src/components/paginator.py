@@ -65,7 +65,8 @@ class Paginator(ft.Column):
         self.update_paginator()
 
     def previous_click(self, e):
-        if self.paginator_init > 10:
+        print(self.paginator_init)
+        if self.paginator_init >= 10:
             self.paginator_init -= 10
             self.update_paginator()
 
@@ -84,12 +85,11 @@ class Paginator(ft.Column):
 
     def update_paginator(self):
         self.paginator = f"{self.paginator_init},{self.paginator_step}"
-        print(self.paginator)
         self.responsiveRow.controls = []
 
         match self.route:
             case "diary":
-                self.responsiveRow.controls.append(DiaryTable(self.__db, self.paginator))
+                self.responsiveRow.controls.append(DiaryTable(self.__db, self.__page, self.paginator))
             case "monthly":
                 self.responsiveRow.controls.append(MonthlyTable(self.__db, self.paginator))
             case "yearly":

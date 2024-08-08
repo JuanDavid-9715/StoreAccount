@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 import flet as ft
+import ctypes
 import os
 
 from config.database import DataBase
@@ -22,10 +23,15 @@ db_access = {
     'database':os.getenv('DATABASE')
 }
 
+user32 = ctypes.windll.user32
+user32.SetProcessDPIAware()
+width, height = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
+
 if __name__ == '__main__':
     db = DataBase(**db_access)
 
     def main(page: ft.Page):
+        page.window.maximized=True
         page.title = "CuentasTienda"
         page.padding = 0
 
